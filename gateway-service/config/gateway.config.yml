@@ -1,0 +1,43 @@
+http:
+  port: 5000
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api-notification:
+    host: localhost
+    paths: '/send'
+  api-customer:
+    host: localhost
+    paths: '/customer'
+serviceEndpoints:
+  notification:
+    url: 'http://notification-service:5001'
+  customer:
+    url: 'http://customer-service:5002'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  default:
+    apiEndpoints:
+      - api-notification
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: notification 
+              changeOrigin: true
+  pipelines-customer:
+    apiEndpoints:
+      - api-customer
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: customer 
+              changeOrigin: true
